@@ -85,8 +85,9 @@ exports.createGradeService = async (req, res) => {
   }
 };
 
-exports.getGradeByIdService = async (id, res) => {
+exports.getGradeByIdService = async (req, res) => {
   try {
+    const { id } = req.params;
     const grade = await gradesModel.findById(id);
     if (!grade) responseStatus(res, 404, "failed", "Grade not found");
 
@@ -127,12 +128,12 @@ exports.editGradeByIdService = async (req, res) => {
 
 exports.deleteGradeByIdService = async (req, res) => {
   try {
-    const { gradeId } = req.params;
+    const { id } = req.params;
 
-    const grade = await gradesModel.findByIdAndDelete(gradeId);
+    const grade = await gradesModel.findByIdAndDelete(id);
 
     const deleteGradeInClassModel = await classModel.findOneAndUpdate(
-      { grade: gradeId },
+      { grade: id },
       { $set: { grade: null, hasGrade: 0 } }
     );
 
