@@ -1,8 +1,9 @@
 const express = require("express");
 const upload = require("../../../middlewares/upload");
-const { checkAdminController } = require("../../../controllers/staff/adminController");
 const adminsRouter = express.Router();
 
-adminsRouter.route("/admin/check").post(upload.single("avatar"), checkAdminController);
+const { checkAdminController } = require("../../../controllers/staff/adminController");
+
+adminsRouter.route("/admin/check").post(checkAdminController);
 
 module.exports = adminsRouter;
