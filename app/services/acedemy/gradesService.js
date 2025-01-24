@@ -4,7 +4,9 @@ const responseStatus = require("../../handlers/responseStatus");
 
 exports.getAllGradesService = async (req, res) => {
   try {
-    const { limit, page, ...sortWithData } = req.query;
+    const { limit, page, sort, classId, ...sortWithData } = req.query;
+    const sortDirection = sort === "-1" ? -1 : 1;
+
     const limitNumber = Number(limit);
     const pageNumber = Number(page);
 
@@ -20,6 +22,7 @@ exports.getAllGradesService = async (req, res) => {
     };
 
     const cleanedSortWithData = cleanSortWithData(sortWithData);
+
     const total = await gradesModel.countDocuments(cleanedSortWithData);
 
     const grades = await gradesModel
@@ -28,13 +31,27 @@ exports.getAllGradesService = async (req, res) => {
       .populate("classes")
       .skip(skip)
       .limit(limitNumber)
+      .sort({ createdAt: sortDirection })
       .exec();
+
+    if (classId) {
+      const filteredGrades = grades.filter((grade) => grade.classes.some((cls) => cls._id.toString() === classId));
+      return res.status(200).json({
+        success: true,
+        message: "success",
+        data: filteredGrades,
+        total: 1,
+        totalPages: 1,
+        currentPage: pageNumber,
+      });
+    }
+
     const totalPages = Math.ceil(total / limitNumber);
 
     return res.status(200).json({
       success: true,
       message: "success",
-      data: grades,
+      data: grades, // Trả về các grade đã được lọc
       total,
       totalPages,
       currentPage: pageNumber,

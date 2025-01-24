@@ -6,7 +6,8 @@ const responseStatus = require("../../handlers/responseStatus");
 
 exports.getAllClassesService = async (req, res) => {
   try {
-    const { limit, page, ...sortWithData } = req.query;
+    const { limit, page, sort, ...sortWithData } = req.query;
+    const sortDirection = sort === "-1" ? -1 : 1;
     const limitNumber = Number(limit);
     const pageNumber = Number(page);
 
@@ -31,6 +32,7 @@ exports.getAllClassesService = async (req, res) => {
       .populate("grade")
       .skip(skip)
       .limit(limitNumber)
+      .sort({ createdAt: sortDirection })
       .exec();
     const totalPages = Math.ceil(total / limitNumber);
 

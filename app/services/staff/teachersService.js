@@ -7,7 +7,10 @@ const { hashPass, comparePass } = require("../../handlers/passHash");
 
 exports.getAllTeachersService = async (req, res) => {
   try {
-    const { limit, page, ...sortWithData } = req.query;
+    const { limit, page, sort, ...sortWithData } = req.query;
+
+    const sortDirection = sort === "-1" ? -1 : 1;
+
     const limitNumber = Number(limit);
     const pageNumber = Number(page);
 
@@ -32,6 +35,7 @@ exports.getAllTeachersService = async (req, res) => {
       .select("-password -role -email -avatar -phoneNumber")
       .skip(skip)
       .limit(limitNumber)
+      .sort({ createdAt: sortDirection })
       .exec();
     const totalPages = Math.ceil(total / limitNumber);
 
