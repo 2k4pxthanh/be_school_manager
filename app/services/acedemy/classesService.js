@@ -114,7 +114,6 @@ exports.editClassByIdService = async (req, res) => {
     const { id } = req.params;
     const data = req.body;
     const updateData = { ...data };
-    console.log(updateData);
 
     let updatedClass;
     if (updateData.grade) {
